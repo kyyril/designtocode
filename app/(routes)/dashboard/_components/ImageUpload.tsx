@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, CloudUpload, UploadIcon, X } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowUp, CloudUpload, Paintbrush, UploadIcon, X } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -55,7 +56,18 @@ function ImageUpload() {
             />
           </div>
         )}
-        <div>Promt</div>
+        <div className="rounded-md p-7 shadow-md flex justify-center items-center flex-col">
+          <h2 className="text-lg font-bold">Add Prompt</h2>
+          <Textarea
+            placeholder="Write Prompt for your design here.."
+            className="mt-3 h-[200px]"
+          />
+        </div>
+      </div>
+      <div className="mt-10 flex justify-center items-center">
+        <Button size="lg">
+          Generate <Paintbrush />
+        </Button>
       </div>
     </div>
   );
