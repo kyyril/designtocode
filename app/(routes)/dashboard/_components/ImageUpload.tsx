@@ -4,10 +4,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowUp, CloudUpload, Paintbrush, UploadIcon, X } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function ImageUpload() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
+  const listAiModels = [
+    { name: "Gemini" },
+    { name: "Deepseek" },
+    { name: "llama" },
+  ];
   const onImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -56,11 +67,25 @@ function ImageUpload() {
             />
           </div>
         )}
-        <div className="rounded-md p-7 shadow-md flex justify-center items-center flex-col">
-          <h2 className="text-lg font-bold">Add Prompt</h2>
+        <div className="rounded-md p-7 shadow-md">
+          <h2 className="font-bold text-lg">Select AI Model</h2>
+          <Select>
+            <SelectTrigger className="w-full mt-2">
+              <SelectValue placeholder="Select Model" />
+            </SelectTrigger>
+            <SelectContent>
+              {listAiModels.map((model, index) => (
+                <SelectItem key={index} value={model.name}>
+                  {model.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <h2 className="text-lg font-bold mt-4">Add Prompt</h2>
           <Textarea
             placeholder="Write Prompt for your design here.."
-            className="mt-3 h-[200px]"
+            className="mt-2 h-[100px]"
           />
         </div>
       </div>
