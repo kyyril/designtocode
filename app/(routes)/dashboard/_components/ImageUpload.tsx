@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, CloudUpload, Paintbrush, UploadIcon, X } from "lucide-react";
+import { CloudUpload, Paintbrush, X } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 import {
@@ -14,16 +14,63 @@ import {
 
 function ImageUpload() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const listAiModels = [
-    { name: "Gemini" },
-    { name: "Deepseek" },
-    { name: "llama" },
-  ];
+  const [file, setFile] = useState<File | null>(null);
+  const [model, setModel] = useState<string>();
+  const [prompt, setPrompt] = useState<string>();
+
+  const listAiModels = ["Gemini", "Deepseek", "Llama"];
+
   const onImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
-      const url = URL.createObjectURL(files[0]);
+    if (files && files[0]) {
+      const selectedFile = files[0];
+
+      // Validasi file harus berupa gambar
+      if (!selectedFile.type.startsWith("image/")) {
+        alert("Please upload a valid image file.");
+        return;
+      }
+
+      const url = URL.createObjectURL(selectedFile);
       setPreviewUrl(url);
+      setFile(selectedFile);
+    }
+  };
+
+  const onGenerateToCodeButton = async () => {
+    if (!file) {
+      alert("Please select an image before uploading.");
+      return;
+    }
+
+    try {
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDIMAGE;
+      if (!cloudName) {
+        throw new Error(
+          "Cloudinary cloud name is missing in environment variables."
+        );
+      }
+
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "designtocode");
+      data.append("cloud_name", cloudName);
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        { method: "POST", body: data }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image.");
+      }
+
+      const result = await response.json();
+      const imageUrl = result.secure_url;
+      console.log("Upload successful:", imageUrl);
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Image upload failed. Please try again.");
     }
   };
   return (
@@ -35,17 +82,17 @@ function ImageUpload() {
             <h2 className="text-lg font-bold">Upload Image</h2>
             <p className="text-gray-400 p-4">Click Button To Select Image</p>
             <div className="p-4 w-full mt-4 border rounded-md flex justify-center">
-              <label htmlFor="imageUpload">
-                <h2 className="text-sm text-secondary bg-primary rounded-md shadow-sm p-2 hover:opacity-90 cursor-pointer">
+              <label htmlFor="imageUpload" className="cursor-pointer">
+                <h2 className="text-sm text-secondary bg-primary rounded-md shadow-sm p-2 hover:opacity-90">
                   Select Image
                 </h2>
               </label>
             </div>
-
             <input
               type="file"
               id="imageUpload"
               className="hidden"
+              accept="image/*"
               multiple={false}
               onChange={onImageSelect}
             />
@@ -62,21 +109,23 @@ function ImageUpload() {
             <X
               className="cursor-pointer mt-2 h-10 w-10 border rounded-sm text-red-600 hover:text-red-300"
               onClick={() => {
+                URL.revokeObjectURL(previewUrl);
                 setPreviewUrl(null);
+                setFile(null);
               }}
             />
           </div>
         )}
         <div className="rounded-md p-7 shadow-md">
           <h2 className="font-bold text-lg">Select AI Model</h2>
-          <Select>
+          <Select onValueChange={setModel}>
             <SelectTrigger className="w-full mt-2">
               <SelectValue placeholder="Select Model" />
             </SelectTrigger>
             <SelectContent>
               {listAiModels.map((model, index) => (
-                <SelectItem key={index} value={model.name}>
-                  {model.name}
+                <SelectItem key={index} value={model}>
+                  {model}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -84,13 +133,14 @@ function ImageUpload() {
 
           <h2 className="text-lg font-bold mt-4">Add Prompt</h2>
           <Textarea
+            onChange={(e) => setPrompt(e.target.value)}
             placeholder="Write Prompt for your design here.."
             className="mt-2 h-[100px]"
           />
         </div>
       </div>
       <div className="mt-10 flex justify-center items-center">
-        <Button size="lg">
+        <Button onClick={onGenerateToCodeButton} size="lg">
           Generate <Paintbrush />
         </Button>
       </div>
