@@ -11,12 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+
+import { useAuthContext } from "@/app/provider";
 
 function ImageUpload() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [model, setModel] = useState<string>();
   const [prompt, setPrompt] = useState<string>();
+  const { user } = useAuthContext();
 
   const listAiModels = ["Gemini", "Deepseek", "Llama"];
 
@@ -68,6 +73,17 @@ function ImageUpload() {
       const result = await response.json();
       const imageUrl = result.secure_url;
       console.log("Upload successful:", imageUrl);
+
+      // Kirim data ke server
+      const uid = uuidv4();
+      const post = await axios.post("/api/design-to-code", {
+        uid: uid,
+        imageUrl: imageUrl,
+        model: model,
+        prompt: prompt,
+        email: user?.email,
+      });
+      console.log("Post response:", post.data);
     } catch (error) {
       console.error("Upload error:", error);
       alert("Image upload failed. Please try again.");
