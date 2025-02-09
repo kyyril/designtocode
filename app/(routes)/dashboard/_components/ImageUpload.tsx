@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { CloudUpload, Paintbrush, X } from "lucide-react";
+import { CloudUpload, Loader2, Paintbrush, X } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 import {
@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-
 import { useAuthContext } from "@/app/provider";
+import { useRouter } from "next/navigation";
+import Constanst from "@/app/data/Constanst";
 
 function ImageUpload() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -22,8 +23,8 @@ function ImageUpload() {
   const [model, setModel] = useState<string>();
   const [prompt, setPrompt] = useState<string>();
   const { user } = useAuthContext();
-
-  const listAiModels = ["Gemini", "Deepseek", "Llama"];
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const onImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -47,6 +48,7 @@ function ImageUpload() {
       alert("Please select an image before uploading.");
       return;
     }
+    setLoading(true);
 
     try {
       const cloudName = process.env.NEXT_PUBLIC_CLOUDIMAGE;
@@ -84,6 +86,8 @@ function ImageUpload() {
         email: user?.email,
       });
       console.log("Post response:", post.data);
+      setLoading(false);
+      router.push(`/view-code/${uid}`);
     } catch (error) {
       console.error("Upload error:", error);
       alert("Image upload failed. Please try again.");
@@ -139,9 +143,9 @@ function ImageUpload() {
               <SelectValue placeholder="Select Model" />
             </SelectTrigger>
             <SelectContent>
-              {listAiModels.map((model, index) => (
-                <SelectItem key={index} value={model}>
-                  {model}
+              {Constanst?.AiModelList.map((model, index) => (
+                <SelectItem key={index} value={model.name}>
+                  {model.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -156,8 +160,14 @@ function ImageUpload() {
         </div>
       </div>
       <div className="mt-10 flex justify-center items-center">
-        <Button onClick={onGenerateToCodeButton} size="lg">
-          Generate <Paintbrush />
+        <Button onClick={onGenerateToCodeButton} size="lg" disabled={loading}>
+          {loading ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <span className="flex flex-row gap-1">
+              Generate <Paintbrush />
+            </span>
+          )}
         </Button>
       </div>
     </div>
