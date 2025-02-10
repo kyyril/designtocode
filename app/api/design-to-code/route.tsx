@@ -22,12 +22,19 @@ export async function GET(res: NextResponse) {
   const reqUrl = res.url;
   const { searchParams } = new URL(reqUrl);
   const uid = searchParams?.get("uid");
+  const email = searchParams?.get("email");
   if (uid) {
     const result = await db
       .select()
       .from(DesignToCodeTable)
       .where(eq(DesignToCodeTable.uid, uid));
     return NextResponse.json(result[0]);
+  } else if (email) {
+    const result = await db
+      .select()
+      .from(DesignToCodeTable)
+      .where(eq(DesignToCodeTable.createdBy, email));
+    return NextResponse.json(result);
   }
   return NextResponse.json({ error: "No UID provided." });
 }

@@ -10,11 +10,10 @@ function DetailSelected({
   regenerateCode,
   isReady,
 }: {
-  record: Record;
+  record: Record | null;
   regenerateCode: any;
   isReady: boolean;
 }) {
-  console.log(record);
   return (
     record && (
       <div className="p-5 bg-gray-50 h-full">
@@ -37,7 +36,7 @@ function DetailSelected({
         <Textarea
           defaultValue={record.prompt}
           disabled
-          className="bg-white rounded-sm border h-[200px] w-full"
+          className="bg-white rounded-sm border h-[120px] w-full"
         />
         <Button
           className="mt-5 w-full"

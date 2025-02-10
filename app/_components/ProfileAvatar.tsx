@@ -30,12 +30,14 @@ function ProfileAvatar() {
     <div>
       <Popover>
         <PopoverTrigger>
-          {user?.user?.photoURL && (
+          {user?.user?.photoURL ? (
             <img
               src={user?.user?.photoURL}
               alt="profile"
               className="w-[35px] h-[35px] rounded-full"
             />
+          ) : (
+            <div className="w-[35px] h-[35px] rounded-full bg-gray-500 opacity-65"></div>
           )}
         </PopoverTrigger>
         <PopoverContent className="w-[100px] mx-w-sm">

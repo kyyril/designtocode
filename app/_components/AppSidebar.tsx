@@ -20,8 +20,8 @@ const items = [
     icon: Home,
   },
   {
-    title: "Design",
-    url: "/design",
+    title: "Designs",
+    url: "/designs",
     icon: PaintBucket,
   },
   {
