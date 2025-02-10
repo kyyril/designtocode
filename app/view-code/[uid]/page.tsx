@@ -54,7 +54,7 @@ function viewCodeId() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: record.prompt + ":" + Constanst.PROMPT + Constanst.PROMPT_OLD,
+        prompt: record.prompt + ":" + Constanst.PROMPT,
         model: record.model,
         imageUrl: record.imageUrl,
       }),

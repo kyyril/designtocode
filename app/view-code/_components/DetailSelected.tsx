@@ -8,9 +8,11 @@ import { RefreshCcwDot } from "lucide-react";
 function DetailSelected({
   record,
   regenerateCode,
+  isReady,
 }: {
   record: Record;
   regenerateCode: any;
+  isReady: boolean;
 }) {
   console.log(record);
   return (
@@ -38,7 +40,11 @@ function DetailSelected({
           className="bg-white rounded-sm border h-[200px]"
         />
 
-        <Button className="mt-5 w-full" onClick={regenerateCode}>
+        <Button
+          className="mt-5 w-full"
+          onClick={regenerateCode}
+          disabled={!isReady}
+        >
           <RefreshCcwDot />
           Regenerate
         </Button>

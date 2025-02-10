@@ -9,6 +9,11 @@ import Constanst from "@/app/data/Constanst";
 import { atomDark } from "@codesandbox/sandpack-themes";
 
 function CodeEditor({ codeRes, isReady }: any) {
+  // Remove first line if code is ready
+  const processedCode = isReady
+    ? codeRes.split("\n").slice(1).join("\n")
+    : codeRes;
+
   return (
     <div className="mt-3 shadow-lg mr-3">
       {isReady ? (
@@ -27,7 +32,7 @@ function CodeEditor({ codeRes, isReady }: any) {
             },
           }}
           files={{
-            "/App.js": `${codeRes}`,
+            "/App.js": processedCode,
           }}
         />
       ) : (
@@ -36,7 +41,7 @@ function CodeEditor({ codeRes, isReady }: any) {
           theme={atomDark}
           files={{
             "/App.js": {
-              code: codeRes,
+              code: processedCode,
               active: true,
             },
           }}
