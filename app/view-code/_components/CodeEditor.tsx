@@ -15,7 +15,7 @@ function CodeEditor({ codeRes, isReady }: any) {
     : codeRes;
 
   return (
-    <div className="mt-3 shadow-lg mr-3">
+    <div className="mt-3 shadow-lg">
       {isReady ? (
         <Sandpack
           template="react"
@@ -24,35 +24,18 @@ function CodeEditor({ codeRes, isReady }: any) {
             externalResources: ["https://cdn.tailwindcss.com"],
             showNavigator: true,
             showTabs: true,
+            showLineNumbers: true,
             editorHeight: 580,
           }}
-          customSetup={{
-            dependencies: {
-              ...Constanst.DEPENDANCY,
-            },
-          }}
-          files={{
-            "/App.js": processedCode,
-          }}
+          customSetup={{ dependencies: { ...Constanst.DEPENDANCY } }}
+          files={{ "/App.js": processedCode }}
         />
       ) : (
         <SandpackProvider
           template="react"
           theme={atomDark}
-          files={{
-            "/App.js": {
-              code: processedCode,
-              active: true,
-            },
-          }}
-          customSetup={{
-            dependencies: {
-              ...Constanst.DEPENDANCY,
-            },
-          }}
-          options={{
-            externalResources: ["https://cdn.tailwindcss.com"],
-          }}
+          files={{ "/App.js": { code: processedCode, active: true } }}
+          customSetup={{ dependencies: { ...Constanst.DEPENDANCY } }}
         >
           <SandpackLayout>
             <SandpackCodeEditor showTabs={true} style={{ height: "84vh" }} />

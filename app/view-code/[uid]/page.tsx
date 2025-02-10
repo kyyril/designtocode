@@ -2,12 +2,13 @@
 import AppHeader from "@/app/_components/AppHeader";
 import Constanst from "@/app/data/Constanst";
 import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { Loader2, Menu } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CodeEditor from "../_components/CodeEditor";
 import DetailSelected from "../_components/DetailSelected";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export interface Record {
   id: number;
@@ -106,33 +107,59 @@ function ViewCodeId() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col h-screen">
       <AppHeader hideSidebar={true} />
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
-        <div>
+
+      {/* Mobile Sidebar */}
+      <div className="md:hidden p-4">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline">
+              <Menu className="mr-2" /> Detail
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80 p-4 overflow-y-auto">
+            <DetailSelected
+              record={record}
+              regenerateCode={getRecordInfo}
+              isReady={isReady && !isSaved}
+            />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar untuk Desktop */}
+        <aside className="hidden md:block w-1/4 lg:w-1/5 bg-gray-50 p-4 overflow-y-auto">
           <DetailSelected
             record={record}
             regenerateCode={getRecordInfo}
             isReady={isReady && !isSaved}
           />
-        </div>
+        </aside>
 
-        <div className="col-span-4">
+        {/* Main Content */}
+        <main className="flex-1 flex flex-col overflow-hidden">
           {loading ? (
-            <h2 className="text-center h-full w-full text-2xl p-20 flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center text-2xl">
               Analyzing Design..
-              <Loader2 className="animate-spin" />
-            </h2>
+              <Loader2 className="animate-spin ml-2" />
+            </div>
           ) : (
-            <>
-              <CodeEditor codeRes={codeResponse} isReady={isReady} />
-
-              <Button onClick={saveCodeToDb} disabled={isSaved || !isReady}>
+            <div className="flex flex-col h-full p-4">
+              <div className="flex-1 overflow-auto">
+                <CodeEditor codeRes={codeResponse} isReady={isReady} />
+              </div>
+              <Button
+                className="mt-4 sm:w-full lg:w-[200px]"
+                onClick={saveCodeToDb}
+                disabled={isSaved || !isReady}
+              >
                 Save Code
               </Button>
-            </>
+            </div>
           )}
-        </div>
+        </main>
       </div>
     </div>
   );
