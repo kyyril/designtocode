@@ -2,12 +2,20 @@ import React from "react";
 import { Record } from "../[uid]/page";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { RefreshCcwDot } from "lucide-react";
 
-function DetailSelected({ record }: { record: Record }) {
+function DetailSelected({
+  record,
+  regenerateCode,
+}: {
+  record: Record;
+  regenerateCode: any;
+}) {
   console.log(record);
   return (
     record && (
-      <div className="p-5 bg-gray-50 h-screen">
+      <div className="p-5 bg-gray-50">
         <h2 className="font-bold mb-2">Your Design</h2>
         <Image
           src={record?.imageUrl}
@@ -27,8 +35,13 @@ function DetailSelected({ record }: { record: Record }) {
         <Textarea
           defaultValue={record.prompt}
           disabled={true}
-          className="bg-white rounded-sm border"
+          className="bg-white rounded-sm border h-[200px]"
         />
+
+        <Button className="mt-5 w-full" onClick={regenerateCode}>
+          <RefreshCcwDot />
+          Regenerate
+        </Button>
       </div>
     )
   );

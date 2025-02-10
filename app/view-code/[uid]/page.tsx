@@ -21,12 +21,15 @@ function viewCodeId() {
   const [loading, setLoading] = useState(false);
   const [codeResponse, setCodeResponese] = useState("");
   const [record, setRecord] = useState<Record | any>();
+  const [isReady, setIsReady] = useState(false);
   const { uid } = useParams();
 
   useEffect(() => {
     uid && getRecordInfo();
   }, [uid]);
   const getRecordInfo = async () => {
+    setCodeResponese("");
+    setIsReady(false);
     setLoading(true);
     const res = await axios.get("/api/design-to-code?uid=" + uid);
 
@@ -34,7 +37,7 @@ function viewCodeId() {
     setRecord(res.data);
     //if code = null, generate code
     if (result?.code == null) {
-      // generateCode(result);
+      generateCode(result);
     }
     if (result?.error) {
       console.error("No Record Found", result.error);
@@ -43,7 +46,7 @@ function viewCodeId() {
   };
 
   const generateCode = async (record: Record) => {
-    setLoading(true);
+    // setLoading(true);
     // Generate code here
     const res = await fetch("/api/ai-model", {
       method: "POST",
@@ -51,12 +54,13 @@ function viewCodeId() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: record.prompt + ":" + Constanst.PROMPT,
+        prompt: record.prompt + ":" + Constanst.PROMPT + Constanst.PROMPT_OLD,
         model: record.model,
         imageUrl: record.imageUrl,
       }),
     });
     if (!res.body) return;
+    setLoading(false);
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     while (true) {
@@ -69,7 +73,7 @@ function viewCodeId() {
       setCodeResponese((prev) => prev + text);
       console.log(text);
     }
-    setLoading(false);
+    setIsReady(true);
   };
   return (
     <div>
@@ -77,12 +81,23 @@ function viewCodeId() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
         <div>
           {/* selected detail */}
-          <DetailSelected record={record} />
+          <DetailSelected
+            record={record}
+            regenerateCode={getRecordInfo}
+            isReady={isReady}
+          />
         </div>
 
         <div className="col-span-4">
           {/* code editor */}
-          <CodeEditor />
+          {loading ? (
+            <h2 className="text-center h-full w-full text-2xl p-20 flex items-center justify-center">
+              Analyzing Design..
+              <Loader2 className="animate-spin" />
+            </h2>
+          ) : (
+            <CodeEditor codeRes={codeResponse} isReady={isReady} />
+          )}
         </div>
       </div>
     </div>
