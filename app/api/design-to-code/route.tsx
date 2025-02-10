@@ -31,3 +31,16 @@ export async function GET(res: NextResponse) {
   }
   return NextResponse.json({ error: "No UID provided." });
 }
+
+export async function PUT(req: NextRequest) {
+  // Update code here
+  const { uid, codeRes } = await req.json();
+  const result = await db
+    .update(DesignToCodeTable)
+    .set({
+      code: codeRes,
+    })
+    .where(eq(DesignToCodeTable.uid, uid))
+    .returning({ uid: DesignToCodeTable.uid });
+  return NextResponse.json(result);
+}

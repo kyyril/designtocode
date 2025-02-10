@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CodeEditor from "../_components/CodeEditor";
 import DetailSelected from "../_components/DetailSelected";
+import { Button } from "@/components/ui/button";
 
 export interface Record {
   id: number;
@@ -15,88 +16,121 @@ export interface Record {
   prompt: string;
   createdBy: string;
   code: any;
+  uid: string;
 }
 
-function viewCodeId() {
+function ViewCodeId() {
   const [loading, setLoading] = useState(false);
-  const [codeResponse, setCodeResponese] = useState("");
-  const [record, setRecord] = useState<Record | any>();
+  const [codeResponse, setCodeResponse] = useState("");
+  const [record, setRecord] = useState<Record | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const { uid } = useParams();
 
   useEffect(() => {
-    uid && getRecordInfo();
+    if (uid) getRecordInfo();
   }, [uid]);
+
   const getRecordInfo = async () => {
-    setCodeResponese("");
+    setCodeResponse("");
     setIsReady(false);
     setLoading(true);
-    const res = await axios.get("/api/design-to-code?uid=" + uid);
+    try {
+      const res = await axios.get(`/api/design-to-code?uid=${uid}`);
+      const result = res.data;
+      setRecord(result);
 
-    const result = res.data;
-    setRecord(res.data);
-    //if code = null, generate code
-    if (result?.code == null) {
-      generateCode(result);
-    }
-    if (result?.error) {
-      console.error("No Record Found", result.error);
+      if (!result?.code) {
+        generateCode(result);
+      } else {
+        setCodeResponse(result.code.res);
+        setIsReady(true);
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error("No Record Found", error);
     }
     setLoading(false);
   };
 
   const generateCode = async (record: Record) => {
-    // setLoading(true);
-    // Generate code here
-    const res = await fetch("/api/ai-model", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: record.prompt + ":" + Constanst.PROMPT,
-        model: record.model,
-        imageUrl: record.imageUrl,
-      }),
-    });
-    if (!res.body) return;
-    setLoading(false);
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const text = decoder
-        .decode(value)
-        .replace("```typescript", "")
-        .replace("```", "");
-      setCodeResponese((prev) => prev + text);
-      console.log(text);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/ai-model", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: `${record.prompt}:${Constanst.PROMPT}`,
+          model: record.model,
+          imageUrl: record.imageUrl,
+        }),
+      });
+      if (!res.body) return;
+
+      setLoading(false);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let newCode = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const text = decoder
+          .decode(value)
+          .replace("```typescript", "")
+          .replace("```", "");
+        newCode += text;
+        setCodeResponse((prev) => prev + text);
+      }
+
+      setIsReady(true);
+      setIsSaved(false);
+    } catch (error) {
+      console.error("Error generating code", error);
     }
-    setIsReady(true);
   };
+
+  const saveCodeToDb = async () => {
+    if (!record || !codeResponse) return;
+    setLoading(true);
+    try {
+      await axios.put("/api/design-to-code", {
+        uid: record.uid,
+        codeRes: { res: codeResponse },
+      });
+      setIsSaved(true);
+    } catch (error) {
+      console.error("Error saving code", error);
+    }
+    setLoading(false);
+  };
+
   return (
     <div>
       <AppHeader hideSidebar={true} />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
         <div>
-          {/* selected detail */}
           <DetailSelected
             record={record}
             regenerateCode={getRecordInfo}
-            isReady={isReady}
+            isReady={isReady && !isSaved}
           />
         </div>
 
         <div className="col-span-4">
-          {/* code editor */}
           {loading ? (
             <h2 className="text-center h-full w-full text-2xl p-20 flex items-center justify-center">
               Analyzing Design..
               <Loader2 className="animate-spin" />
             </h2>
           ) : (
-            <CodeEditor codeRes={codeResponse} isReady={isReady} />
+            <>
+              <CodeEditor codeRes={codeResponse} isReady={isReady} />
+
+              <Button onClick={saveCodeToDb} disabled={isSaved || !isReady}>
+                Save Code
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -104,4 +138,4 @@ function viewCodeId() {
   );
 }
 
-export default viewCodeId;
+export default ViewCodeId;
