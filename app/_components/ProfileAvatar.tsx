@@ -1,8 +1,7 @@
 "use client";
 import { auth } from "@/configs/firebaseConfig";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import Image from "next/image";
-import React, { useEffect } from "react";
+import { signOut } from "firebase/auth";
+import React from "react";
 import { useAuthContext } from "../provider";
 import {
   Popover,
@@ -12,6 +11,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function ProfileAvatar() {
   const user = useAuthContext();
@@ -35,9 +35,10 @@ function ProfileAvatar() {
               src={user?.user?.photoURL}
               alt="profile"
               className="w-[35px] h-[35px] rounded-full"
+              loading="lazy"
             />
           ) : (
-            <div className="w-[35px] h-[35px] rounded-full bg-gray-500 opacity-65"></div>
+            <Skeleton className="w-[35px] h-[35px] rounded-full"></Skeleton>
           )}
         </PopoverTrigger>
         <PopoverContent className="w-[100px] mx-w-sm">

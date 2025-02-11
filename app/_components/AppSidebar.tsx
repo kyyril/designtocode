@@ -8,9 +8,7 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
-import { CoinsIcon, Home, PaintBucket } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { Home, PaintBucket } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const items = [
@@ -24,11 +22,6 @@ const items = [
     url: "/designs",
     icon: PaintBucket,
   },
-  {
-    title: "Credits",
-    url: "/credits",
-    icon: CoinsIcon,
-  },
 ];
 
 export function AppSidebar() {
@@ -38,11 +31,11 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <a
-          className="flex-none text-xl font-semibold dark:text-white"
+          className="flex-none text-xl font-semibold text-primary"
           href="#"
           aria-label="Brand"
         >
-          Brand
+          DesignToCode
         </a>
       </SidebarHeader>
       <SidebarContent>

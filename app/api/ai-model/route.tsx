@@ -15,7 +15,8 @@ export async function POST(req: NextRequest) {
         headers: {
           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": process.env.NEXT_PUBLIC_URL,
+          "HTTP-Referer":
+            process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000",
         },
         body: JSON.stringify({
           model: modelName,
@@ -23,16 +24,8 @@ export async function POST(req: NextRequest) {
             {
               role: "user",
               content: [
-                {
-                  type: "text",
-                  text: prompt,
-                },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: imageUrl,
-                  },
-                },
+                { type: "text", text: prompt },
+                { type: "image_url", image_url: { url: imageUrl } },
               ],
             },
           ],
@@ -45,9 +38,9 @@ export async function POST(req: NextRequest) {
       throw new Error(`API request failed: ${response.statusText}`);
     }
 
-    // Get the response as ReadableStream
     const reader = response.body?.getReader();
     const decoder = new TextDecoder();
+    let buffer = "";
 
     return new Response(
       new ReadableStream({
@@ -59,33 +52,53 @@ export async function POST(req: NextRequest) {
               const { done, value } = await reader.read();
               if (done) break;
 
-              // Decode the stream chunks
-              const chunk = decoder.decode(value);
-              const lines = chunk
-                .split("\n")
-                .filter((line) => line.trim() !== "");
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split("\n");
+              buffer = lines.pop() || "";
 
               for (const line of lines) {
-                if (line.startsWith("data: ")) {
-                  const data = line.slice(6);
-                  if (data === "[DONE]") continue;
+                const trimmedLine = line.trim();
+                if (!trimmedLine || !trimmedLine.startsWith("data: ")) continue;
 
+                const data = trimmedLine.slice(6);
+                if (data === "[DONE]") continue;
+
+                try {
+                  const parsed = JSON.parse(data);
+                  const content = parsed.choices?.[0]?.delta?.content;
+                  if (content) {
+                    controller.enqueue(content);
+                  }
+                } catch (e) {
+                  console.error("Parse error:", e, "Data:", data);
+                }
+              }
+            }
+
+            // Flush any remaining buffer
+            if (buffer) {
+              const trimmedLine = buffer.trim();
+              if (trimmedLine && trimmedLine.startsWith("data: ")) {
+                const data = trimmedLine.slice(6);
+                if (data !== "[DONE]") {
                   try {
                     const parsed = JSON.parse(data);
-                    const text = parsed.choices?.[0]?.delta?.content || "";
-                    controller.enqueue(text);
+                    const content = parsed.choices?.[0]?.delta?.content;
+                    if (content) {
+                      controller.enqueue(content);
+                    }
                   } catch (e) {
-                    console.error("Error parsing JSON:", e);
+                    console.error("Parse error:", e, "Data:", data);
                   }
                 }
               }
             }
           } catch (error) {
-            console.error("Stream processing error:", error);
+            console.error("Stream error:", error);
             controller.error(error);
           } finally {
+            reader?.releaseLock();
             controller.close();
-            reader.releaseLock();
           }
         },
       }),
@@ -98,7 +111,7 @@ export async function POST(req: NextRequest) {
       }
     );
   } catch (error) {
-    console.error("API route error:", error);
+    console.error("API error:", error);
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
