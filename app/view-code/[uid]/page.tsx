@@ -18,6 +18,7 @@ export interface Record {
   createdBy: string;
   code: any;
   uid: string;
+  createdAt: string;
 }
 
 function ViewCodeId() {

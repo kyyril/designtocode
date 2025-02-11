@@ -1,4 +1,10 @@
-import { integer, pgTable, varchar, json } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  varchar,
+  json,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -15,4 +21,5 @@ export const DesignToCodeTable = pgTable("designToCode", {
   prompt: varchar(),
   code: json(),
   createdBy: varchar(),
+  createdAt: timestamp().defaultNow().notNull(),
 });
