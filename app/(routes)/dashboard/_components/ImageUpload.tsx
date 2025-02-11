@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useAuthContext } from "@/app/provider";
 import { useRouter } from "next/navigation";
 import Constanst from "@/app/data/Constanst";
+import { Card } from "@/components/ui/card";
 
 function ImageUpload() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -97,13 +98,13 @@ function ImageUpload() {
     <div className="mt-10">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {!previewUrl ? (
-          <div className="rounded-md p-7 shadow-md flex justify-center items-center flex-col">
+          <Card className="rounded-md p-7 shadow-md flex justify-center items-center flex-col">
             <CloudUpload className="h-10 w-10" />
             <h2 className="text-lg font-bold">Upload Image</h2>
             <p className="text-gray-400 p-4">Click Button To Select Image</p>
             <div className="p-4 w-full mt-4 border rounded-md flex justify-center">
               <label htmlFor="imageUpload" className="cursor-pointer">
-                <h2 className="text-sm text-secondary bg-primary rounded-md shadow-sm p-2 hover:opacity-90">
+                <h2 className="text-sm text-primary-foreground bg-primary rounded-md shadow-sm p-2 hover:opacity-90">
                   Select Image
                 </h2>
               </label>
@@ -116,7 +117,7 @@ function ImageUpload() {
               multiple={false}
               onChange={onImageSelect}
             />
-          </div>
+          </Card>
         ) : (
           <div className="p-5 border flex justify-center items-center flex-col rounded-md shadow-md">
             <Image
@@ -160,7 +161,12 @@ function ImageUpload() {
         </div>
       </div>
       <div className="mt-10 flex justify-center items-center">
-        <Button onClick={onGenerateToCodeButton} size="lg" disabled={loading}>
+        <Button
+          variant={"secondary"}
+          onClick={onGenerateToCodeButton}
+          size="lg"
+          disabled={loading}
+        >
           {loading ? (
             <Loader2 className="animate-spin" />
           ) : (

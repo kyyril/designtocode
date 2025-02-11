@@ -28,10 +28,10 @@ export function AppSidebar() {
   const pathname = usePathname();
   console.log(pathname);
   return (
-    <Sidebar>
+    <Sidebar className="outline-none border-none">
       <SidebarHeader>
         <a
-          className="flex-none text-xl font-semibold text-primary"
+          className="flex-none text-xl font-bold text-primary p-4"
           href="#"
           aria-label="Brand"
         >
@@ -46,8 +46,8 @@ export function AppSidebar() {
                 <a
                   href={item.url}
                   key={index}
-                  className={`p-2 text-lg flex gap-2 items-center hover:bg-gray-100 rounded-lg ${
-                    pathname == item.url && "bg-gray-200"
+                  className={`p-2 text-lg flex gap-2 items-center hover:bg-primary/40 rounded-lg ${
+                    pathname == item.url && "bg-primary"
                   }`}
                 >
                   <item.icon className="h-5 w-5" />

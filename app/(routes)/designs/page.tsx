@@ -44,7 +44,7 @@ function Designs() {
           : designs.map((design: Record) => (
               <Card
                 key={design.id}
-                className="shadow-lg rounded-lg overflow-hidden"
+                className="shadow-lg rounded-md overflow-hidden"
               >
                 <CardContent className="p-4">
                   <Image
@@ -60,7 +60,10 @@ function Designs() {
                   </p>
                   <p className="text-sm text-gray-500">Model: {design.model}</p>
                   <Link href={`/view-code/${design?.uid}`}>
-                    <Button className="mt-3 w-full active:opacity-50">
+                    <Button
+                      variant={"outline"}
+                      className="mt-3 w-full active:opacity-50"
+                    >
                       <Code />
                       View Code
                     </Button>

@@ -130,7 +130,7 @@ function ViewCodeId() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar untuk Desktop */}
-        <aside className="hidden md:block w-1/4 lg:w-1/5 bg-gray-50 p-4 overflow-y-auto">
+        <aside className="hidden md:block w-1/4 lg:w-1/5 p-4 overflow-y-auto">
           <DetailSelected
             record={record}
             regenerateCode={getRecordInfo}
