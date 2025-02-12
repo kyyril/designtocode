@@ -1,6 +1,5 @@
 "use client";
 
-import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 import Authentication from "./_components/Authentication";
 import ProfileAvatar from "./_components/ProfileAvatar";
 import { useAuthContext } from "./provider";
@@ -59,7 +58,7 @@ const FeatureCard = memo(
   }) => (
     <div className="group flex flex-col justify-center hover:bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-7 transition-all duration-300 border border-white/10">
       <Icon className="w-8 h-8 text-gray-300 group-hover:text-white transition-colors" />
-      <h3 className="mt-4 group-hover:text-white text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-white via-violet-600 to-violet-900 transition-colors">
+      <h3 className="mt-4 group-hover:text-white text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-600 to-purple-900 transition-colors">
         {title}
       </h3>
       <p className="mt-1 text-gray-300/80">{description}</p>
@@ -72,11 +71,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen w-full overflow-hidden flex flex-col relative">
-      {/* Background Animation */}
-      <div className="fixed inset-0 -z-10">
-        <BackgroundGradientAnimation />
-      </div>
-
       {/* Header */}
       <header className="backdrop-blur-xl bg-black/20 p-3 fixed top-0 left-0 right-0 flex justify-between items-center w-full z-50">
         <a
@@ -84,7 +78,7 @@ export default function Home() {
           href="#"
           aria-label="Brand"
         >
-          <span className="hover:text-white transition-colors bg-gradient-to-r from-violet-800 via-violet-600 to-white bg-clip-text text-transparent ">
+          <span className="hover:text-white transition-colors bg-gradient-to-r from-purple-800 via-purple-600 to-white bg-clip-text text-transparent ">
             DesignTo
           </span>
           Code
@@ -107,7 +101,7 @@ export default function Home() {
       <main className="flex-grow flex flex-col items-center text-center px-6 pt-40 pb-20 h-screen mt-24">
         <h1 className="text-5xl pb-4 md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
           Transform Your Designs
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-violet-600 to-violet-900">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-600 to-purple-900">
             {" "}
             into Code
           </span>

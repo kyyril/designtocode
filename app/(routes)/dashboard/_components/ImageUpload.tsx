@@ -95,7 +95,7 @@ function ImageUpload() {
     }
   };
   return (
-    <div className="mt-10">
+    <div className="mt-10 h-full">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {!previewUrl ? (
           <Card className="rounded-md p-7 flex justify-center items-center flex-col border-none outline-none bg-secondary/40 backdrop-blur-xl">

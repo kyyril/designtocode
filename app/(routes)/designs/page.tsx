@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Record } from "@/app/view-code/[uid]/page";
 import { Code } from "lucide-react";
 import Link from "next/link";
-import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 
 function Designs() {
   const { user } = useAuthContext();
@@ -42,10 +41,7 @@ function Designs() {
   });
 
   return (
-    <div className="p-5">
-      <div className="fixed inset-0 -z-10">
-        <BackgroundGradientAnimation />
-      </div>
+    <div className="w-full mx-auto max-w-7xl">
       <h2 className="text-xl font-bold mb-4">Your Designs</h2>
       <div className="flex justify-end mb-4">
         <Button

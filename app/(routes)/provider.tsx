@@ -2,10 +2,9 @@
 import React, { useEffect } from "react";
 import { useAuthContext } from "../provider";
 import { useRouter } from "next/navigation";
-import { SidebarProvider } from "@/components/ui/sidebar";
+
 import axios from "axios";
 import AppHeader from "../_components/AppHeader";
-import { AppSidebar } from "../_components/AppSidebar";
 
 function DashboardProvider({
   children,
@@ -30,14 +29,11 @@ function DashboardProvider({
   };
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main className="w-full">
-        <AppHeader />
-        {/* <SidebarTrigger /> */}
-        <div className="p-10">{children}</div>
-      </main>
-    </SidebarProvider>
+    <main className="w-full">
+      <AppHeader />
+      {/* <SidebarTrigger /> */}
+      <div className="p-10">{children}</div>
+    </main>
   );
 }
 
