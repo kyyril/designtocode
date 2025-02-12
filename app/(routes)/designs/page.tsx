@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Record } from "@/app/view-code/[uid]/page";
 import { Code } from "lucide-react";
 import Link from "next/link";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 
 function Designs() {
   const { user } = useAuthContext();
@@ -42,6 +43,9 @@ function Designs() {
 
   return (
     <div className="p-5">
+      <div className="fixed inset-0 -z-10">
+        <BackgroundGradientAnimation />
+      </div>
       <h2 className="text-xl font-bold mb-4">Your Designs</h2>
       <div className="flex justify-end mb-4">
         <Button
@@ -59,7 +63,7 @@ function Designs() {
           : sortedDesigns.map((design: Record) => (
               <Card
                 key={design.id}
-                className="shadow-lg rounded-md overflow-hidden"
+                className="rounded-md overflow-hidden bg-secondary/50 backdrop-blur-xl outline-none border-none"
               >
                 <CardContent className="p-4">
                   <Image

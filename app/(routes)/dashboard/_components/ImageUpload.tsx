@@ -98,7 +98,7 @@ function ImageUpload() {
     <div className="mt-10">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {!previewUrl ? (
-          <Card className="rounded-md p-7 shadow-md flex justify-center items-center flex-col">
+          <Card className="rounded-md p-7 flex justify-center items-center flex-col border-none outline-none bg-secondary/40 backdrop-blur-xl">
             <CloudUpload className="h-10 w-10" />
             <h2 className="text-lg font-bold">Upload Image</h2>
             <p className="text-gray-400 p-4">Click Button To Select Image</p>
@@ -119,7 +119,7 @@ function ImageUpload() {
             />
           </Card>
         ) : (
-          <div className="p-5 border flex justify-center items-center flex-col rounded-md shadow-md">
+          <div className="p-4 border flex justify-center items-center flex-col rounded-md shadow-md">
             <Image
               width={500}
               height={500}
@@ -128,7 +128,7 @@ function ImageUpload() {
               className="object-contain w-full h-[300px]"
             />
             <X
-              className="cursor-pointer mt-2 h-10 w-10 border rounded-sm text-red-600 hover:text-red-300"
+              className="cursor-pointer h-10 w-10 border rounded-sm text-red-600 hover:text-red-300"
               onClick={() => {
                 URL.revokeObjectURL(previewUrl);
                 setPreviewUrl(null);
@@ -137,7 +137,7 @@ function ImageUpload() {
             />
           </div>
         )}
-        <div className="rounded-md p-7 shadow-md">
+        <div className="rounded-md p-7 bg-secondary/40 backdrop-blur-xl">
           <h2 className="font-bold text-lg">Select AI Model</h2>
           <Select onValueChange={setModel}>
             <SelectTrigger className="w-full mt-2">
@@ -162,7 +162,7 @@ function ImageUpload() {
       </div>
       <div className="mt-10 flex justify-center items-center">
         <Button
-          variant={"secondary"}
+          variant={"default"}
           onClick={onGenerateToCodeButton}
           size="lg"
           disabled={loading}
